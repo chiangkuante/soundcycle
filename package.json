@@ -1,0 +1,23 @@
+{
+  "name": "audio-switcher",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "pack:msix": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/pack-msix.ps1",
+    "pack:store": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/pack-msix.ps1 -Store"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.16"
+  },
+  "license": "MIT"
+}

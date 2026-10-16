@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoundCycle</title>
+    <script type="module" src="/src/main.ts" defer></script>
+  </head>
+
+  <body>
+    <nav class="tabs">
+      <button class="tab active" data-view="playback" data-i18n="tabPlayback"></button>
+      <button class="tab" data-view="recording" data-i18n="tabRecording"></button>
+      <button class="tab settings-tab" data-view="settings" data-i18n-title="tabSettings">⚙</button>
+    </nav>
+
+    <main id="audio-view">
+      <div class="row">
+        <label for="command" data-i18n="command"></label>
+        <select id="command"></select>
+        <button id="command-menu-button" popovertarget="command-menu" data-i18n-title="manageCommands">⋯</button>
+        <button id="switch" data-i18n-title="switchNext">▶</button>
+      </div>
+
+      <div id="command-menu" class="menu" popover>
+        <button data-action="add" data-i18n="newCommand"></button>
+        <button data-action="rename" data-i18n="rename"></button>
+        <button data-action="delete" data-i18n="delete"></button>
+      </div>
+
+      <div class="row">
+        <label for="hotkey" data-i18n="hotkey"></label>
+        <input id="hotkey" readonly data-i18n-placeholder="hotkeyIdle" />
+      </div>
+
+      <p id="hint" hidden data-i18n="hintEmpty"></p>
+      <ul id="devices"></ul>
+    </main>
+
+    <main id="settings-view" hidden>
+      <label class="setting">
+        <input type="checkbox" id="run_at_startup" />
+        <span>
+          <strong data-i18n="startupTitle"></strong>
+          <small data-i18n="startupDesc"></small>
+        </span>
+      </label>
+      <label class="setting">
+        <input type="checkbox" id="run_in_background" />
+        <span>
+          <strong data-i18n="backgroundTitle"></strong>
+          <small data-i18n="backgroundDesc"></small>
+        </span>
+      </label>
+      <label class="setting">
+        <input type="checkbox" id="switch_communication_device" />
+        <span>
+          <strong data-i18n="commTitle"></strong>
+          <small data-i18n="commDesc"></small>
+        </span>
+      </label>
+    </main>
+
+    <p id="status" role="status"></p>
+
+    <dialog id="dialog">
+      <form method="dialog">
+        <p id="dialog-message"></p>
+        <input id="dialog-input" />
+        <div class="dialog-buttons">
+          <button value="cancel" formnovalidate data-i18n="cancel"></button>
+          <button value="ok" class="primary" data-i18n="ok"></button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>

@@ -1,0 +1,300 @@
+:root {
+  --bg: #f3f3f3;
+  --surface: #ffffff;
+  --text: #1b1b1b;
+  --muted: #6b6b6b;
+  --accent: #0067c0;
+  --error: #c42b1c;
+  --border: #e0e0e0;
+
+  font-family: "Segoe UI Variable", "Segoe UI", "Microsoft JhengHei UI", sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #202020;
+    --surface: #2b2b2b;
+    --text: #ffffff;
+    --muted: #9d9d9d;
+    --accent: #4cc2ff;
+    --error: #ff99a4;
+    --border: #3a3a3a;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px 0;
+}
+
+.tab {
+  border: none;
+  background: none;
+  color: var(--muted);
+  padding: 8px 12px;
+  font: inherit;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+}
+
+.tab.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+main {
+  padding: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+select,
+button {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+}
+
+select {
+  flex: 1;
+}
+
+button {
+  cursor: pointer;
+}
+
+#devices {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+  display: grid;
+  gap: 4px;
+}
+
+.device label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.device input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.device .name {
+  flex: 1;
+}
+
+.device .badge {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.device:not(.active) .name {
+  color: var(--muted);
+}
+
+#status {
+  white-space: pre-line;
+  color: var(--muted);
+  min-height: 1.5em;
+}
+
+#status.error {
+  color: var(--error);
+}
+
+.row + .row {
+  margin-top: 8px;
+}
+
+.row label {
+  flex: none;
+  width: 2.5em;
+}
+
+/* English labels ("Command") are wider than the two-character Chinese ones. */
+:root:lang(en) .row label {
+  width: 4.6em;
+}
+
+input#hotkey {
+  flex: 1;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  caret-color: transparent;
+}
+
+input#hotkey:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.settings-tab {
+  margin-left: auto;
+  font-size: 16px;
+}
+
+/* Command menu: a native popover anchored under the ⋯ button. */
+#command-menu-button {
+  anchor-name: --command-menu;
+}
+
+.menu {
+  position-anchor: --command-menu;
+  inset: auto;
+  top: anchor(bottom);
+  right: anchor(right);
+  margin: 4px 0 0;
+  padding: 4px;
+  min-width: 140px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
+}
+
+.menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+}
+
+.menu button:hover {
+  background: var(--bg);
+}
+
+.menu button[data-action="delete"] {
+  color: var(--error);
+}
+
+/* Settings */
+#settings-view {
+  display: grid;
+  gap: 4px;
+}
+
+#settings-view[hidden] {
+  display: none;
+}
+
+.setting {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.setting input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+}
+
+.setting span {
+  display: grid;
+  gap: 2px;
+}
+
+.setting small {
+  color: var(--muted);
+}
+
+#status {
+  padding: 0 12px;
+}
+
+/* Dialog */
+dialog {
+  width: min(320px, calc(100vw - 32px));
+  padding: 16px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+dialog::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+dialog p {
+  margin: 0 0 12px;
+}
+
+#dialog-input {
+  width: 100%;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+  button.primary {
+    color: #000;
+  }
+}
+
+#hint {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  color: var(--text);
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+}

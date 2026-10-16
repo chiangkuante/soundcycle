@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-switch-next"
+description = "Enables the switch_next command without any pre-configured scope."
+commands.allow = ["switch_next"]
+
+[[permission]]
+identifier = "deny-switch-next"
+description = "Denies the switch_next command without any pre-configured scope."
+commands.deny = ["switch_next"]

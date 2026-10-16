@@ -1,0 +1,97 @@
+# Microsoft Store listing draft
+
+Store ID 9N486C0C2CGP — https://apps.microsoft.com/detail/9N486C0C2CGP
+
+---
+
+## 繁體中文 (zh-TW)
+
+### 簡短描述（最多 100 字元建議）
+
+用熱鍵在耳機、喇叭、麥克風之間一鍵切換。拔掉再插回的裝置也會記住。
+
+### 描述
+
+SoundCycle 讓你用一組熱鍵，在你挑選的音訊裝置之間輪流切換，不必再打開音效設定一層層點選。
+
+● 一鍵輪切：選好要輪流使用的裝置（例如耳機、喇叭、外接 DAC），按下熱鍵就切到下一個。
+● 記得每一個裝置：無線耳機沒電、USB 裝置拔掉，勾選都會保留；插回去就能直接切換，不必重新設定。換了 USB 孔或重新配對藍牙，也會用名稱自動找回。
+● 播放與錄音分開設定：喇叭和麥克風可以各自有一組指令，也可以共用同一個熱鍵一次切換兩者。
+● 浮出提示：切換時在螢幕下方顯示目前的裝置，連按多次也只顯示最新的那一個；不會搶走遊戲或其他視窗的焦點。
+● 系統匣常駐：從系統匣選單直接選擇播放或錄音裝置。
+● 同時切換通訊裝置：可選擇讓 Discord、Teams 等通話軟體一起改用新裝置。
+● 開機自動啟動：登入後在背景待命，不會跳出視窗。
+● 熱鍵衝突提示：熱鍵若已被其他程式使用，會直接告訴你。
+
+不收集任何個人資料，不需要網路連線。
+
+### 功能（Product features，每項最多 200 字元）
+
+- 用熱鍵在多個播放或錄音裝置之間輪流切換
+- 拔掉再插回的裝置會保留設定，插回即可切換
+- 切換時顯示不搶焦點的浮出提示
+- 系統匣選單快速選擇裝置
+- 可同時切換預設通訊裝置
+- 開機自動在背景啟動
+
+### 搜尋關鍵字（Store 上限 7 組）
+
+音訊切換, 聲音輸出, 預設音訊裝置, 耳機, 喇叭, 麥克風, 熱鍵
+
+---
+
+## English (en-US)
+
+### Short description
+
+Switch between headphones, speakers and microphones with one hotkey. Unplugged devices are remembered.
+
+### Description
+
+SoundCycle cycles through the audio devices you pick with a single hotkey — no more digging through Sound settings.
+
+● One-key cycling: choose the devices to rotate through (headset, speakers, external DAC…) and press the hotkey to move to the next one.
+● Remembers every device: a headset that runs out of battery or a USB device you unplug stays selected, and is used again as soon as it is back. Plugged into another USB port or re-paired over Bluetooth? It is found again by name.
+● Separate playback and recording: give speakers and microphones their own commands, or share one hotkey to switch both at once.
+● On-screen overlay: shows the device you switched to at the bottom of the screen, always the latest one when you press repeatedly, without stealing focus from your game.
+● Lives in the system tray: pick a playback or recording device straight from the tray menu.
+● Communication device too: optionally switch the default communication device used by Discord, Teams and other call apps.
+● Starts with Windows: waits in the background after you sign in, without opening a window.
+● Hotkey conflict warnings: tells you when another program already owns a hotkey.
+
+Collects no personal data and needs no internet connection.
+
+### Product features
+
+- Cycle through playback or recording devices with a hotkey
+- Unplugged devices stay selected and work again when plugged back in
+- Focus-safe on-screen overlay shows the device you switched to
+- Pick devices straight from the system tray menu
+- Optionally switch the default communication device too
+- Starts in the background when you sign in
+
+### Search terms (Store limit: 7)
+
+audio switcher, sound output, default audio device, headphones, speakers, microphone, hotkey
+
+---
+
+## Certification notes (for the "Notes for certification" field)
+
+runFullTrust: SoundCycle is a desktop (Win32) app. It enumerates audio
+endpoints with the documented Core Audio API (IMMDeviceEnumerator,
+IMMNotificationClient) and registers global hotkeys with RegisterHotKey.
+
+Policy 10.2.8 disclosure: Windows has no documented API for changing the
+default audio endpoint, so SoundCycle calls IPolicyConfig::SetDefaultEndpoint,
+the undocumented COM interface the Windows Sound control panel itself uses
+(also used by other Store apps such as EarTrumpet). It is called only when the
+user explicitly asks for a switch (their hotkey, the switch button, or a tray
+menu item), only for the default playback/recording/communication endpoint,
+and the user's own choice in Windows Sound settings stays in effect until they
+switch again. SoundCycle changes no other Windows setting and runs at sign-in
+only if the user turns that on (StartupTask, off by default).
+
+To test: open the app, tick two or more playback devices, set a hotkey
+(e.g. Ctrl+F7) and press it. The default device changes and an overlay at the
+bottom of the screen shows the new device.

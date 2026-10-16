@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "osd",
+  "description": "Switch overlay: only receives the show/hide events",
+  "windows": ["osd"],
+  "permissions": ["core:event:allow-listen", "core:event:allow-unlisten"]
+}
