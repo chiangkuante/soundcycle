@@ -95,3 +95,15 @@ only if the user turns that on (StartupTask, off by default).
 To test: open the app, tick two or more playback devices, set a hotkey
 (e.g. Ctrl+F7) and press it. The default device changes and an overlay at the
 bottom of the screen shows the new device.
+
+## Screenshots and captions (each caption ≤ 200 characters)
+
+Files in `store/screenshots/` (1920×1080, the real UI with sample device
+names; no added logos or text). App tile icon: `store/app-tile-300.png`.
+
+| File | 繁體中文說明 | English caption |
+|---|---|---|
+| `*-1-playback.png` | 勾選要輪流切換的裝置並設定熱鍵；拔掉的裝置（例如 AirPods）會保留勾選，插回就能用。 | Tick the devices to cycle through and set a hotkey. Unplugged devices, like the AirPods here, stay selected. |
+| `*-2-overlay.png` | 切換時在螢幕下方顯示目前的裝置，不會搶走遊戲或其他視窗的焦點。 | An overlay shows the device you switched to, without taking focus from your game. |
+| `*-3-recording.png` | 麥克風等錄音裝置也能用自己的熱鍵輪流切換。 | Microphones and other recording devices get their own hotkey too. |
+| `*-4-settings.png` | 開機時自動在系統匣待命，也能同時切換通話軟體使用的通訊裝置。 | Starts with Windows in the tray, and can also switch the communication device used by call apps. |
