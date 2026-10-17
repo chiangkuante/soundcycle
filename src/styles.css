@@ -61,11 +61,11 @@ main {
 
 .row {
   display: flex;
-  align-items: center;
+  /* Hotkey field and switch button share one height. */
+  align-items: stretch;
   gap: 8px;
 }
 
-select,
 button {
   font: inherit;
   color: var(--text);
@@ -73,13 +73,6 @@ button {
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 6px 10px;
-}
-
-select {
-  flex: 1;
-}
-
-button {
   cursor: pointer;
 }
 
@@ -130,18 +123,10 @@ button {
   color: var(--error);
 }
 
-.row + .row {
-  margin-top: 8px;
-}
-
 .row label {
   flex: none;
-  width: 2.5em;
-}
-
-/* English labels ("Command") are wider than the two-character Chinese ones. */
-:root:lang(en) .row label {
-  width: 4.6em;
+  align-self: center;
+  margin-right: 4px;
 }
 
 input#hotkey {
@@ -164,42 +149,6 @@ input#hotkey:focus {
 .settings-tab {
   margin-left: auto;
   font-size: 16px;
-}
-
-/* Command menu: a native popover anchored under the ⋯ button. */
-#command-menu-button {
-  anchor-name: --command-menu;
-}
-
-.menu {
-  position-anchor: --command-menu;
-  inset: auto;
-  top: anchor(bottom);
-  right: anchor(right);
-  margin: 4px 0 0;
-  padding: 4px;
-  min-width: 140px;
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
-}
-
-.menu button {
-  display: block;
-  width: 100%;
-  text-align: left;
-  border: none;
-  background: none;
-}
-
-.menu button:hover {
-  background: var(--bg);
-}
-
-.menu button[data-action="delete"] {
-  color: var(--error);
 }
 
 /* Settings */
@@ -243,52 +192,6 @@ input#hotkey:focus {
   padding: 0 12px;
 }
 
-/* Dialog */
-dialog {
-  width: min(320px, calc(100vw - 32px));
-  padding: 16px;
-  color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-
-dialog::backdrop {
-  background: rgb(0 0 0 / 0.4);
-}
-
-dialog p {
-  margin: 0 0 12px;
-}
-
-#dialog-input {
-  width: 100%;
-  font: inherit;
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 6px 10px;
-}
-
-.dialog-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-button.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
-@media (prefers-color-scheme: dark) {
-  button.primary {
-    color: #000;
-  }
-}
 
 #hint {
   margin: 12px 0 0;

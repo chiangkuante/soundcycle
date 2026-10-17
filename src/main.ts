@@ -5,15 +5,6 @@ import { initI18n, m } from "./i18n";
 type Flow = "playback" | "recording";
 type DeviceState = "active" | "disabled" | "unplugged" | "notpresent";
 
-interface CommandSummary {
-  /** Identifies the command in backend calls. */
-  name: string;
-  /** What to show; built-in commands have a localized label. */
-  label: string;
-  flow: Flow;
-  hotkey: string | null;
-}
-
 interface DeviceRow {
   id: string;
   name: string;
@@ -30,31 +21,20 @@ interface SwitchOutcome {
 const stateLabel = (state: DeviceState): string =>
   ({ active: "", disabled: m.stateDisabled, unplugged: m.stateUnplugged, notpresent: m.stateNotPresent })[state];
 
-const commandSelect = document.querySelector<HTMLSelectElement>("#command")!;
 const deviceList = document.querySelector<HTMLUListElement>("#devices")!;
 const statusEl = document.querySelector<HTMLParagraphElement>("#status")!;
 const hotkeyInput = document.querySelector<HTMLInputElement>("#hotkey")!;
 const hint = document.querySelector<HTMLParagraphElement>("#hint")!;
 let flow: Flow = "playback";
-let commands: CommandSummary[] = [];
 
 function showStatus(message: string, isError = false) {
   statusEl.textContent = message;
   statusEl.classList.toggle("error", isError);
 }
 
-async function loadCommands(select = commandSelect.value) {
-  commands = await invoke<CommandSummary[]>("list_commands", { flow });
-  commandSelect.replaceChildren(
-    ...commands.map((c) => new Option(c.label, c.name)),
-  );
-  if (commands.some((c) => c.name === select)) commandSelect.value = select;
-  await onCommandChanged();
-}
-
-async function onCommandChanged() {
-  const command = commands.find((c) => c.name === commandSelect.value);
-  hotkeyInput.value = formatHotkey(command?.hotkey ?? null);
+/** Loads the current tab: its hotkey and its device list. */
+async function loadFlow() {
+  hotkeyInput.value = formatHotkey(await invoke<string | null>("get_hotkey", { flow }));
   await loadDevices();
 }
 
@@ -87,12 +67,8 @@ function hotkeyFromEvent(e: KeyboardEvent): string | null {
 }
 
 async function setHotkey(hotkey: string | null) {
-  const command = commands.find((c) => c.name === commandSelect.value);
-  if (!command) return;
-
   try {
-    await invoke("set_hotkey", { command: command.name, hotkey });
-    command.hotkey = hotkey;
+    await invoke("set_hotkey", { flow, hotkey });
     hotkeyInput.value = formatHotkey(hotkey);
     showStatus(hotkey ? m.hotkeySet(formatHotkey(hotkey)) : m.hotkeyCleared);
   } catch (e) {
@@ -129,11 +105,8 @@ hotkeyInput.addEventListener("keydown", async (e) => {
 });
 
 async function loadDevices() {
-  const command = commandSelect.value;
-  if (!command) return;
-
   try {
-    const rows = await invoke<DeviceRow[]>("device_rows", { command });
+    const rows = await invoke<DeviceRow[]>("device_rows", { flow });
     const visible = rows.filter((r) => r.state !== "disabled" || r.checked);
     deviceList.replaceChildren(...visible.map(renderRow));
     hint.hidden = rows.some((r) => r.checked);
@@ -152,7 +125,7 @@ function renderRow(row: DeviceRow): HTMLLIElement {
   checkbox.addEventListener("change", async () => {
     try {
       await invoke("set_device_checked", {
-        command: commandSelect.value,
+        flow,
         id: row.id,
         name: row.name,
         checked: checkbox.checked,
@@ -179,9 +152,7 @@ function renderRow(row: DeviceRow): HTMLLIElement {
 
 async function switchNext() {
   try {
-    const outcome = await invoke<SwitchOutcome>("switch_next", {
-      command: commandSelect.value,
-    });
+    const outcome = await invoke<SwitchOutcome>("switch_next", { flow });
     const lines = outcome.switched_to ? [`✔ ${outcome.switched_to}`] : [];
     lines.push(...outcome.skipped.map(m.skipped));
     showStatus(lines.join("\n") || m.noDevice);
@@ -190,78 +161,6 @@ async function switchNext() {
     showStatus(String(e), true);
   }
 }
-
-// --- Dialog -----------------------------------------------------------------
-
-const dialog = document.querySelector<HTMLDialogElement>("#dialog")!;
-const dialogMessage = document.querySelector<HTMLParagraphElement>("#dialog-message")!;
-const dialogInput = document.querySelector<HTMLInputElement>("#dialog-input")!;
-
-/** Asks for text, or just confirmation when `value` is null. Resolves to the
- *  entered text ("" when confirming), or null when cancelled. */
-function ask(message: string, value: string | null = null): Promise<string | null> {
-  dialogMessage.textContent = message;
-  dialogInput.hidden = value === null;
-  dialogInput.value = value ?? "";
-  dialog.returnValue = "cancel";
-  dialog.showModal();
-  if (value !== null) dialogInput.select();
-
-  return new Promise((resolve) => {
-    dialog.addEventListener(
-      "close",
-      () => resolve(dialog.returnValue === "ok" ? dialogInput.value : null),
-      { once: true },
-    );
-  });
-}
-
-// --- Commands ---------------------------------------------------------------
-
-const commandMenu = document.querySelector<HTMLDivElement>("#command-menu")!;
-
-const selectedLabel = () =>
-  commands.find((c) => c.name === commandSelect.value)?.label ?? commandSelect.value;
-
-const commandActions: Record<string, () => Promise<void>> = {
-  async add() {
-    const name = await ask(m.newCommandName, "");
-    if (name === null) return;
-    const created = await invoke<string>("add_command", { flow, name });
-    await loadCommands(created);
-    showStatus(m.added(created));
-  },
-
-  async rename() {
-    const command = commandSelect.value;
-    const label = selectedLabel();
-    const name = await ask(m.renamePrompt(label), label);
-    if (name === null) return;
-    const renamed = await invoke<string>("rename_command", { command, name });
-    await loadCommands(renamed);
-    showStatus(m.renamed(renamed));
-  },
-
-  async delete() {
-    const command = commandSelect.value;
-    const label = selectedLabel();
-    if ((await ask(m.deletePrompt(label))) === null) return;
-    await invoke("delete_command", { command });
-    await loadCommands();
-    showStatus(m.deleted(label));
-  },
-};
-
-commandMenu.querySelectorAll<HTMLButtonElement>("button").forEach((button) => {
-  button.addEventListener("click", async () => {
-    commandMenu.hidePopover();
-    try {
-      await commandActions[button.dataset.action!]();
-    } catch (e) {
-      showStatus(String(e), true);
-    }
-  });
-});
 
 // --- Settings ---------------------------------------------------------------
 
@@ -321,12 +220,11 @@ document.querySelectorAll<HTMLButtonElement>(".tab").forEach((tab) => {
       await loadSettings();
     } else {
       flow = view as Flow;
-      await loadCommands();
+      await loadFlow();
     }
   });
 });
 
-commandSelect.addEventListener("change", onCommandChanged);
 document.querySelector("#switch")!.addEventListener("click", switchNext);
 
 // The backend emits this when devices are plugged, unplugged, renamed or the
@@ -336,5 +234,5 @@ listen("devices-changed", () => {
 });
 
 initI18n()
-  .then(() => loadCommands())
+  .then(() => loadFlow())
   .catch((e) => showStatus(String(e), true));

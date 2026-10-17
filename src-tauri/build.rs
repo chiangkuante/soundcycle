@@ -3,15 +3,12 @@
 // overlay window (capabilities/osd.json) cannot call any of them.
 const COMMANDS: &[&str] = &[
     "ui_language",
-    "list_commands",
+    "get_hotkey",
     "device_rows",
     "set_device_checked",
     "switch_next",
     "set_hotkey",
     "pause_hotkeys",
-    "add_command",
-    "rename_command",
-    "delete_command",
     "get_settings",
     "update_settings",
 ];

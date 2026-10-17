@@ -1,6 +1,6 @@
 [package]
 name = "audio-switcher"
-version = "1.0.0"
+version = "1.0.1"
 description = "Hotkey-driven default audio device switcher"
 authors = ["ChiangKuanTe"]
 license = "MIT"

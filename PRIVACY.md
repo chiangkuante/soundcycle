@@ -10,8 +10,8 @@ Last updated / 最後更新：2026-10-16
 
 To work, SoundCycle keeps a settings file on your own computer only. It contains:
 
-- your commands and their hotkeys;
-- the audio devices you selected for each command (their Windows device ID and name);
+- your playback and recording hotkeys;
+- the audio devices you selected to cycle through (their Windows device ID and name);
 - your settings (start with Windows, keep running in the tray, switch the communication device).
 
 **Where:** the app's private folder for your Windows user account. For the Microsoft Store version this is under `%LOCALAPPDATA%\Packages\ChiangKuanTe.SoundCycle_x3ew30pk2pah0\`. It is an ordinary local file, so anyone or any program with access to your user account can read it, as with other app settings.
@@ -24,7 +24,7 @@ To work, SoundCycle keeps a settings file on your own computer only. It contains
 
 ### Windows features the app uses
 
-SoundCycle reads the list of audio devices and changes the Windows default playback or recording device when you ask it to, by hotkey, button or tray menu. If you turn on "Start with Windows", it registers a startup task, which you can turn off in the app or in Task Manager.
+SoundCycle reads the list of audio devices and changes the Windows default playback or recording device when you ask it to, by hotkey, button or tray menu. "Start with Windows" is on by default: it uses a Windows startup task, which you can turn off in the app's settings or in Task Manager.
 
 ### Contact
 
@@ -38,8 +38,8 @@ Questions about this policy: open an issue at https://github.com/chiangkuante/so
 
 為了運作，SoundCycle 只在你自己的電腦上保存一個設定檔，內容包括：
 
-- 你的指令與熱鍵；
-- 每個指令勾選的音訊裝置（Windows 裝置 ID 與名稱）；
+- 你的播放與錄音熱鍵；
+- 你勾選要輪流切換的音訊裝置（Windows 裝置 ID 與名稱）；
 - 你的設定（開機時自動啟動、縮到系統匣、同時切換通訊裝置）。
 
 **位置：** 你的 Windows 使用者帳號底下、這個 App 專用的資料夾。Microsoft Store 版位於 `%LOCALAPPDATA%\Packages\ChiangKuanTe.SoundCycle_x3ew30pk2pah0\`。它是一般的本機檔案，和其他 App 的設定一樣，能存取你使用者帳號的人或程式都可以讀取。
@@ -52,7 +52,7 @@ Questions about this policy: open an issue at https://github.com/chiangkuante/so
 
 ### App 使用的 Windows 功能
 
-SoundCycle 會讀取音訊裝置清單，並在你要求時（熱鍵、按鈕或系統匣選單）變更 Windows 預設的播放或錄音裝置。若你開啟「開機時自動啟動」，它會登記一個開機工作，你可以在 App 或工作管理員中關閉。
+SoundCycle 會讀取音訊裝置清單，並在你要求時（熱鍵、按鈕或系統匣選單）變更 Windows 預設的播放或錄音裝置。「開機時自動啟動」預設開啟，使用的是 Windows 的開機工作，你可以在 App 的設定或工作管理員中關閉。
 
 ### 聯絡方式
 

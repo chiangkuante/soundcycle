@@ -16,7 +16,7 @@
   <Identity
     Name="ChiangKuanTe.SoundCycle"
     Publisher="CN=F59BC0F9-350A-45D6-B046-D9C36EFDD1BD"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
   <Properties>
     <DisplayName>SoundCycle</DisplayName>
@@ -50,15 +50,16 @@
       </uap:VisualElements>
 
       <Extensions>
-        <!-- Run at sign-in. Off until the user enables it in Settings; the
-             TaskId must match TASK_ID in src-tauri/src/startup.rs. -->
+        <!-- Run at sign-in. On by default; the user can turn it off in
+             Settings or Task Manager. The TaskId must match TASK_ID in
+             src-tauri/src/startup.rs. -->
         <desktop:Extension
           Category="windows.startupTask"
           Executable="audio-switcher.exe"
           EntryPoint="Windows.FullTrustApplication">
           <desktop:StartupTask
             TaskId="AudioSwitcherStartup"
-            Enabled="false"
+            Enabled="true"
             DisplayName="SoundCycle" />
         </desktop:Extension>
       </Extensions>

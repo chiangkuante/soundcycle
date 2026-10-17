@@ -7,7 +7,7 @@ Cycle through your audio devices with a hotkey on Windows. Built with Rust and T
 - Pick the playback or recording devices to cycle through; each hotkey press switches the Windows default to the next one.
 - Devices you unplug stay selected and are used again once they're back, even if Windows gives them a new ID.
 - A focus-safe overlay shows the device you switched to; a tray menu lists devices for direct switching.
-- Optional: also switch the default communication device, start with Windows.
+- Also switches the default communication device and starts with Windows (both on by default, both can be turned off).
 
 [Privacy policy / 隱私權政策](PRIVACY.md)
 

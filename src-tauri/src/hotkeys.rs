@@ -30,24 +30,6 @@ pub fn parse(hotkey: &str) -> Result<Shortcut, String> {
     Ok(shortcut)
 }
 
-fn same(a: &str, b: &str) -> bool {
-    matches!((parse(a), parse(b)), (Ok(a), Ok(b)) if a.id() == b.id())
-}
-
-/// Checks that no other command of the same flow uses this hotkey. Playback
-/// and recording commands may share one; pressing it switches both.
-pub fn check_conflict(config: &Config, command: &str, hotkey: &str) -> Result<(), String> {
-    let flow = config.command(command).ok_or(tr!("找不到指令", "Command not found"))?.flow;
-    let other = config.commands.iter().find(|c| {
-        c.name != command && c.flow == flow && c.hotkey.as_deref().is_some_and(|h| same(h, hotkey))
-    });
-
-    match other {
-        Some(c) => Err(tr!("「{}」已被指令「{}」使用", "\"{}\" is already used by \"{}\"", hotkey, c.label())),
-        None => Ok(()),
-    }
-}
-
 /// Re-registers every configured hotkey. Returns one message per hotkey that
 /// Windows refused, usually because another program already owns it.
 pub fn register_all(app: &AppHandle, config: &Config) -> Vec<String> {
@@ -95,7 +77,6 @@ pub fn on_pressed(app: &AppHandle, shortcut: &Shortcut) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::{Flow, SwitchCommand, PLAYBACK_KEY, RECORDING_KEY};
     use tauri_plugin_global_shortcut::Modifiers;
 
     #[test]
@@ -115,19 +96,5 @@ mod tests {
         let b = parse("Shift+Ctrl+KeyM").unwrap();
         assert_eq!(a.id(), b.id());
         assert_eq!(a.mods, Modifiers::CONTROL | Modifiers::SHIFT);
-    }
-
-    #[test]
-    fn same_hotkey_is_allowed_across_flows_but_not_within_one() {
-        let mut config = Config::default();
-        config.commands.push(SwitchCommand {
-            name: "耳機組".into(),
-            flow: Flow::Playback,
-            hotkey: Some("Ctrl+F7".into()),
-            devices: vec![],
-        });
-
-        assert!(check_conflict(&config, PLAYBACK_KEY, "Ctrl+F7").is_err());
-        assert!(check_conflict(&config, RECORDING_KEY, "Ctrl+F7").is_ok());
     }
 }

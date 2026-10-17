@@ -2,20 +2,19 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "main",
   "description": "Settings window: the app's commands and device-change events",
-  "windows": ["main"],
+  "windows": [
+    "main"
+  ],
   "permissions": [
     "core:event:allow-listen",
     "core:event:allow-unlisten",
     "allow-ui-language",
-    "allow-list-commands",
+    "allow-get-hotkey",
     "allow-device-rows",
     "allow-set-device-checked",
     "allow-switch-next",
     "allow-set-hotkey",
     "allow-pause-hotkeys",
-    "allow-add-command",
-    "allow-rename-command",
-    "allow-delete-command",
     "allow-get-settings",
     "allow-update-settings"
   ]

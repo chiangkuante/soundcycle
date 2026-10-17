@@ -17,21 +17,9 @@
 
     <main id="audio-view">
       <div class="row">
-        <label for="command" data-i18n="command"></label>
-        <select id="command"></select>
-        <button id="command-menu-button" popovertarget="command-menu" data-i18n-title="manageCommands">⋯</button>
-        <button id="switch" data-i18n-title="switchNext">▶</button>
-      </div>
-
-      <div id="command-menu" class="menu" popover>
-        <button data-action="add" data-i18n="newCommand"></button>
-        <button data-action="rename" data-i18n="rename"></button>
-        <button data-action="delete" data-i18n="delete"></button>
-      </div>
-
-      <div class="row">
         <label for="hotkey" data-i18n="hotkey"></label>
         <input id="hotkey" readonly data-i18n-placeholder="hotkeyIdle" />
+        <button id="switch" data-i18n-title="switchNext">▶</button>
       </div>
 
       <p id="hint" hidden data-i18n="hintEmpty"></p>
@@ -64,15 +52,5 @@
 
     <p id="status" role="status"></p>
 
-    <dialog id="dialog">
-      <form method="dialog">
-        <p id="dialog-message"></p>
-        <input id="dialog-input" />
-        <div class="dialog-buttons">
-          <button value="cancel" formnovalidate data-i18n="cancel"></button>
-          <button value="ok" class="primary" data-i18n="ok"></button>
-        </div>
-      </form>
-    </dialog>
   </body>
 </html>

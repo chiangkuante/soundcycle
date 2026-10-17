@@ -29,80 +29,55 @@ struct AppState {
     hotkeys_paused: AtomicBool,
 }
 
-#[derive(Serialize)]
-struct CommandSummary {
-    /// Identifies the command in every other call.
-    name: String,
-    /// What to show; differs from `name` for the built-in commands.
-    label: String,
-    flow: Flow,
-    hotkey: Option<String>,
-}
-
 #[tauri::command]
 fn ui_language() -> &'static str {
     i18n::code()
 }
 
 #[tauri::command]
-fn list_commands(state: State<AppState>, flow: Flow) -> Vec<CommandSummary> {
-    let config = state.config.lock().unwrap();
-    config
-        .commands
-        .iter()
-        .filter(|c| c.flow == flow)
-        .map(|c| CommandSummary {
-            name: c.name.clone(),
-            label: c.label(),
-            flow: c.flow,
-            hotkey: c.hotkey.clone(),
-        })
-        .collect()
+fn get_hotkey(state: State<AppState>, flow: Flow) -> Option<String> {
+    state.config.lock().unwrap().flow(flow).hotkey.clone()
 }
 
 #[tauri::command]
-fn device_rows(state: State<AppState>, command: String) -> Result<Vec<DeviceRow>, String> {
+fn device_rows(state: State<AppState>, flow: Flow) -> Result<Vec<DeviceRow>, String> {
     let config = state.config.lock().unwrap();
-    let cmd = config.command(&command).ok_or(tr!("找不到指令", "Command not found"))?;
     let backend = WindowsAudio;
-    let devices = backend.devices(cmd.flow)?;
-    let default_id = backend.default_id(cmd.flow);
-    Ok(switcher::device_rows(cmd, &devices, default_id.as_deref()))
+    let devices = backend.devices(flow)?;
+    let default_id = backend.default_id(flow);
+    Ok(switcher::device_rows(config.flow(flow), &devices, default_id.as_deref()))
 }
 
 #[tauri::command]
 fn set_device_checked(
     state: State<AppState>,
-    command: String,
+    flow: Flow,
     id: String,
     name: String,
     checked: bool,
 ) -> Result<(), String> {
+    let present_ids: Vec<String> = WindowsAudio.devices(flow)?.into_iter().map(|d| d.id).collect();
     let mut config = state.config.lock().unwrap();
-    let cmd = config.command_mut(&command).ok_or(tr!("找不到指令", "Command not found"))?;
-    let present_ids: Vec<String> = WindowsAudio.devices(cmd.flow)?.into_iter().map(|d| d.id).collect();
-    cmd.set_checked(DeviceRef { id, name }, checked, &present_ids);
+    config.flow_mut(flow).set_checked(DeviceRef { id, name }, checked, &present_ids);
     state.store.save(&config).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
-fn switch_next(state: State<AppState>, command: String) -> Result<SwitchOutcome, String> {
+fn switch_next(state: State<AppState>, flow: Flow) -> Result<SwitchOutcome, String> {
     let config = state.config.lock().unwrap();
-    let cmd = config.command(&command).ok_or(tr!("找不到指令", "Command not found"))?;
-    switcher::switch_next(&WindowsAudio, cmd, config.switch_communication_device)
+    switcher::switch_next(&WindowsAudio, config.flow(flow), config.switch_communication_device)
 }
 
-/// Sets or clears a command's hotkey. The hotkey is test-registered first, so
+/// Sets or clears a flow's hotkey. The hotkey is test-registered first, so
 /// one already taken by another program is rejected with a clear message
-/// instead of silently never firing.
+/// instead of silently never firing. Playback and recording may share one;
+/// pressing it switches both.
 #[tauri::command]
-fn set_hotkey(app: AppHandle, state: State<AppState>, command: String, hotkey: Option<String>) -> Result<(), String> {
+fn set_hotkey(app: AppHandle, state: State<AppState>, flow: Flow, hotkey: Option<String>) -> Result<(), String> {
     let mut config = state.config.lock().unwrap();
 
     if let Some(hotkey) = &hotkey {
         let shortcut = hotkeys::parse(hotkey)?;
-        hotkeys::check_conflict(&config, &command, hotkey)?;
-
         let shortcuts = app.global_shortcut();
         if !shortcuts.is_registered(shortcut) {
             shortcuts
@@ -112,36 +87,9 @@ fn set_hotkey(app: AppHandle, state: State<AppState>, command: String, hotkey: O
         }
     }
 
-    config.command_mut(&command).ok_or(tr!("找不到指令", "Command not found"))?.hotkey = hotkey;
+    config.flow_mut(flow).hotkey = hotkey;
     state.store.save(&config).map_err(|e| e.to_string())?;
 
-    if !state.hotkeys_paused.load(Ordering::SeqCst) {
-        hotkeys::register_all(&app, &config);
-    }
-    Ok(())
-}
-
-#[tauri::command]
-fn add_command(state: State<AppState>, flow: Flow, name: String) -> Result<String, String> {
-    let mut config = state.config.lock().unwrap();
-    let name = config.add_command(&name, flow)?;
-    state.store.save(&config).map_err(|e| e.to_string())?;
-    Ok(name)
-}
-
-#[tauri::command]
-fn rename_command(state: State<AppState>, command: String, name: String) -> Result<String, String> {
-    let mut config = state.config.lock().unwrap();
-    let name = config.rename_command(&command, &name)?;
-    state.store.save(&config).map_err(|e| e.to_string())?;
-    Ok(name)
-}
-
-#[tauri::command]
-fn delete_command(app: AppHandle, state: State<AppState>, command: String) -> Result<(), String> {
-    let mut config = state.config.lock().unwrap();
-    config.delete_command(&command)?;
-    state.store.save(&config).map_err(|e| e.to_string())?;
     if !state.hotkeys_paused.load(Ordering::SeqCst) {
         hotkeys::register_all(&app, &config);
     }
@@ -272,15 +220,12 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             ui_language,
-            list_commands,
+            get_hotkey,
             device_rows,
             set_device_checked,
             switch_next,
             set_hotkey,
             pause_hotkeys,
-            add_command,
-            rename_command,
-            delete_command,
             get_settings,
             update_settings
         ])
